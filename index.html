@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -18,10 +18,10 @@
             display: flex; justify-content: center; align-items: center;
             overflow: hidden;
             position: relative;
-            perspective: 1000px; /* Tạo chiều sâu 3D */
+            perspective: 1200px; /* Chiều sâu 3D */
         }
 
-        /* --- 2. HIỆU ỨNG SAO BĂNG --- */
+        /* --- 2. HIỆU ỨNG SAO BĂNG NỀN --- */
         .sky-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 0; pointer-events: none; transform: rotateZ(45deg);
@@ -43,38 +43,62 @@
         @keyframes shooting { 0% { transform: translateX(0); } 100% { transform: translateX(300px); } }
         @keyframes shining { 0% { width: 0; } 50% { width: 30px; } 100% { width: 0; } }
         
-        /* Chỉnh vị trí sao băng */
         .shooting_star:nth-child(1) { top: 0; left: 0; animation-delay: 0ms; }
         .shooting_star:nth-child(2) { top: 0; left: 50%; animation-delay: 2000ms; }
         .shooting_star:nth-child(3) { top: 50%; left: 0; animation-delay: 4000ms; }
         .shooting_star:nth-child(4) { top: 50%; left: 50%; animation-delay: 6000ms; }
 
-        /* --- 3. KHUNG THẺ 3D CAO CẤP --- */
+        /* --- 3. MÀN HÌNH CHỜ (Overlay) --- */
+        #start-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); 
+            z-index: 99999 !important; /* Luôn nằm trên cùng */
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
+            color: white; transition: opacity 0.5s;
+            backdrop-filter: blur(5px);
+        }
+        .start-btn {
+            margin-top: 20px; padding: 15px 40px; border-radius: 50px;
+            background: #ff9a9e; color: white; border: none; font-size: 1.2em; font-weight: bold;
+            animation: pulse 2s infinite; cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 154, 158, 0.6);
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* --- 4. THẺ BÀI PHA LÊ 3D --- */
         .memory-card {
             background: rgba(255, 255, 255, 0.65);
             backdrop-filter: blur(15px);
-            border: 2px solid rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             padding: 30px;
             border-radius: 30px;
             text-align: center;
             width: 85%; max-width: 420px;
             z-index: 10;
             position: relative;
-            transform-style: preserve-3d; /* Giữ các lớp con ở dạng 3D */
-            transition: transform 0.1s ease-out; /* Chuyển động mượt mà theo cảm biến */
-            overflow: hidden; /* Cắt phần ánh sáng thừa */
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out; /* Mượt mà cho cảm biến */
+            overflow: hidden;
             
-            /* Hiệu ứng Hào Quang (Breathing Glow) */
+            /* Hiệu ứng Hào Quang */
             animation: cardGlow 4s infinite alternate;
         }
 
-        /* Luồng sáng quét qua (Shine Effect) */
+        /* Độ dày thẻ (Màu hồng thạch anh) */
         .memory-card::before {
-            content: ''; position: absolute; top: 0; left: -150%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-            transform: skewX(-25deg); pointer-events: none;
-            transition: 0s; /* Tắt transition để di chuyển tức thời theo cảm biến */
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 30px;
+            background: #e056fd; /* Màu cạnh thẻ */
+            transform: translateZ(-10px); /* Đẩy ra sau */
+            box-shadow: 0 30px 40px rgba(0,0,0,0.2);
+        }
+
+        /* Ánh sáng quét qua (Shine) */
+        .shine-layer {
+            position: absolute; top: 0; left: -150%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+            transform: skewX(-25deg); pointer-events: none; transition: 0s;
+            mix-blend-mode: overlay;
         }
 
         @keyframes cardGlow {
@@ -82,13 +106,13 @@
             100% { box-shadow: 0 20px 50px rgba(161, 140, 209, 0.6), 0 0 20px rgba(162, 155, 254, 0.4); border-color: #fff; }
         }
 
-        /* Các phần tử nổi (Parallax) */
+        /* --- 5. NỘI DUNG BÊN TRONG (Parallax) --- */
         .avatar-frame {
             width: 120px; height: 120px; margin: 0 auto 15px;
             padding: 5px; border-radius: 50%;
             background: linear-gradient(45deg, #ff9a9e, #a18cd1);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transform: translateZ(30px); /* Nổi lên cao */
+            transform: translateZ(30px); /* Nổi lên */
         }
         .avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid white; }
 
@@ -100,22 +124,18 @@
             transform: translateZ(40px);
         }
 
-        p { color: #636e72; font-size: 1.1em; line-height: 1.6; transform: translateZ(25px); }
+        p { color: #636e72; font-size: 1.1em; line-height: 1.6; transform: translateZ(25px); font-weight: 600;}
 
-        /* --- 4. ĐỒNG HỒ ĐẾM NGƯỢC --- */
+        /* Đồng hồ đếm ngược */
         .countdown-container { 
-            display: flex; justify-content: center; gap: 10px; margin: 20px 0; 
+            display: flex; justify-content: center; gap: 12px; margin: 20px 0; 
             transform: translateZ(35px); 
         }
-        
         .time-bubble {
             background: rgba(255, 255, 255, 0.9);
-            width: 60px; height: 70px; 
-            border-radius: 15px;
-            display: flex; flex-direction: column; 
-            justify-content: center; align-items: center;
-            box-shadow: 0 5px 15px rgba(162, 155, 254, 0.3);
-            border: 1px solid white;
+            width: 60px; height: 70px; border-radius: 15px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            box-shadow: 0 5px 15px rgba(162, 155, 254, 0.3); border: 1px solid white;
             animation: floatBubble 3s ease-in-out infinite;
         }
         .time-bubble span { font-weight: bold; font-size: 1.5em; color: #6c5ce7; }
@@ -125,50 +145,31 @@
         .time-bubble:nth-child(2) { animation-delay: 0.5s; }
         .time-bubble:nth-child(3) { animation-delay: 1s; }
         .time-bubble:nth-child(4) { animation-delay: 1.5s; }
-
-        @keyframes floatBubble {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
-        }
+        @keyframes floatBubble { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 
         /* Nút nhận quà */
         .btn-reveal {
             background: linear-gradient(90deg, #ff9a9e, #fad0c4);
             color: white; border: none;
-            padding: 12px 30px; border-radius: 50px;
+            padding: 12px 35px; border-radius: 50px;
             font-size: 1.1em; font-weight: bold; cursor: pointer;
             box-shadow: 0 5px 15px rgba(255, 154, 158, 0.4);
             transition: transform 0.3s;
             display: none; font-family: 'Quicksand', sans-serif;
-            transform: translateZ(50px); /* Nổi cao nhất */
+            transform: translateZ(50px);
         }
+        .btn-reveal:hover { transform: scale(1.05) translateZ(50px); }
         
-        /* Khu vực hiển thị quà */
         #gift-area { display: none; margin-top: 20px; animation: fadeIn 1s; transform: translateZ(30px); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- 5. MÀN HÌNH CHỜ (Overlay) --- */
-        /* Dùng để kích hoạt nhạc và quyền cảm biến trên iOS */
-        #start-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 999;
-            display: flex; justify-content: center; align-items: center; flex-direction: column;
-            color: white; transition: opacity 0.5s;
-        }
-        .start-btn {
-            margin-top: 20px; padding: 15px 40px; border-radius: 50px;
-            background: #ff9a9e; color: white; border: none; font-size: 1.2em; font-weight: bold;
-            animation: pulse 2s infinite; cursor: pointer;
-        }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
     </style>
 </head>
 <body>
 
     <div id="start-overlay">
-        <h2 style="font-family: 'Dancing Script'; font-size: 2.5em;">Bạn có một món quà!</h2>
-        <p>Đeo tai nghe để trải nghiệm tốt nhất 🎧</p>
+        <h2 style="font-family: 'Dancing Script'; font-size: 2.5em; text-align: center;">Bạn có một món quà! 🎁</h2>
+        <p style="margin-top:0;">Đeo tai nghe để trải nghiệm tốt nhất</p>
         <button class="start-btn" onclick="startExperience()">Chạm để mở ✨</button>
     </div>
 
@@ -178,6 +179,8 @@
     </div>
 
     <div class="memory-card" id="card3d">
+        <div class="shine-layer" id="shine"></div>
+
         <div class="avatar-frame">
             <img src="https://i.postimg.cc/rs4WbSWp/33.jpg" alt="Avatar" class="avatar">
         </div>
@@ -211,154 +214,162 @@
     </audio>
 
     <script>
-    // --- 1. BIẾN CẤU HÌNH ---
-    const card = document.querySelector(".memory-card");
-    const bgMusic = document.getElementById("bgMusic");
-    let isRunning = false;
+        // --- 1. RESET TRẠNG THÁI KHI TẢI LẠI TRANG ---
+        window.onload = function() {
+            var overlay = document.getElementById('start-overlay');
+            if (overlay) {
+                overlay.style.display = 'flex';
+                overlay.style.opacity = '1';
+            }
+        };
 
-    // --- 2. XỬ LÝ CẢM BIẾN (GYROSCOPE) ---
-    function handleOrientation(event) {
-        let x = event.beta;  // Nghiêng trước-sau
-        let y = event.gamma; // Nghiêng trái-phải
+        const card = document.getElementById("card3d");
+        const shine = document.getElementById("shine");
+        const bgMusic = document.getElementById("bgMusic");
 
-        // Fix lỗi null trên một số máy Android
-        if (x === null || y === null) return;
+        // --- 2. HÀM KHỞI ĐỘNG (Nút Chạm để mở) ---
+        function startExperience() {
+            // Ẩn màn hình chờ
+            document.getElementById('start-overlay').style.opacity = '0';
+            setTimeout(() => { document.getElementById('start-overlay').style.display = 'none'; }, 500);
 
-        // Giới hạn góc nghiêng (Max 30 độ) để không bị lật ngược
-        if (x > 30) x = 30; if (x < -30) x = -30;
-        if (y > 30) y = 30; if (y < -30) y = -30;
+            // Phát nhạc & Giảm volume
+            if(bgMusic) { bgMusic.volume = 0.3; bgMusic.play().catch(e => console.log(e)); }
 
-        // Xoay thẻ
-        // iPhone và Android đôi khi ngược chiều nhau, đây là chiều chuẩn phổ thông
-        card.style.transform = `rotateX(${-x}deg) rotateY(${y}deg)`;
-        
-        // Di chuyển bóng đổ cho nổi
-        let shadowX = -y * 0.5;
-        let shadowY = x * 0.5;
-        card.style.boxShadow = `${shadowX}px ${shadowY + 15}px 35px rgba(255, 182, 193, 0.4)`;
-    }
-
-    // --- 3. XỬ LÝ CẢM ỨNG (TOUCH) - NẾU CẢM BIẾN HỎNG THÌ DÙNG TAY VUỐT ---
-    document.addEventListener("touchmove", (e) => {
-        if (window.innerWidth > 800) return; // Chỉ chạy trên mobile
-        // Lấy vị trí ngón tay
-        let touch = e.touches[0];
-        let xAxis = (window.innerWidth / 2 - touch.pageX) / 20;
-        let yAxis = (window.innerHeight / 2 - touch.pageY) / 20;
-        card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-    });
-
-    document.addEventListener("touchend", () => {
-        // Thả tay ra thì trả về giữa
-        card.style.transform = `rotateY(0deg) rotateX(0deg)`;
-    });
-
-    // --- 4. HÀM KHỞI ĐỘNG (XIN QUYỀN IOS + PHÁT NHẠC) ---
-    function startExperience() {
-        // Ẩn màn hình chờ
-        const overlay = document.getElementById('start-overlay');
-        if(overlay) {
-            overlay.style.opacity = '0';
-            setTimeout(() => { overlay.style.display = 'none'; }, 500);
+            // Xin quyền iOS
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(permissionState => {
+                        if (permissionState === 'granted') {
+                            window.addEventListener('deviceorientation', handleOrientation);
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                // Android/PC
+                window.addEventListener('deviceorientation', handleOrientation);
+            }
         }
 
-        // Phát nhạc
-        if (bgMusic) {
-            bgMusic.volume = 0.4;
-            bgMusic.play().catch(e => console.log("Lỗi nhạc: ", e));
-        }
-
-        // XIN QUYỀN CẢM BIẾN (QUAN TRỌNG NHẤT CHO IPHONE)
-        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-            // Dành cho iOS 13+
-            DeviceOrientationEvent.requestPermission()
-                .then(permissionState => {
-                    if (permissionState === 'granted') {
-                        window.addEventListener('deviceorientation', handleOrientation);
-                    } else {
-                        alert("Bạn đã từ chối quyền cảm biến. Hãy dùng ngón tay vuốt nhẹ lên thẻ nhé!");
-                    }
-                })
-                .catch(console.error);
-        } else {
-            // Dành cho Android và iOS đời cũ
-            window.addEventListener('deviceorientation', handleOrientation);
-        }
-    }
-
-    // --- 5. LOGIC ĐỒNG HỒ ĐẾM NGƯỢC (GIỮ NGUYÊN) ---
-    const birthdayTime = new Date("December 12, 2025 16:00:00").getTime();
-
-    const timer = setInterval(function() {
-        const now = new Date().getTime();
-        const distance = birthdayTime - now;
-
-        const d = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const s = Math.floor((distance % (1000 * 60)) / 1000);
-
-        // Kiểm tra nếu element tồn tại mới gán (tránh lỗi)
-        if(document.getElementById("d")) {
-            document.getElementById("d").innerText = d < 10 ? "0"+d : d;
-            document.getElementById("h").innerText = h < 10 ? "0"+h : h;
-            document.getElementById("m").innerText = m < 10 ? "0"+m : m;
-            document.getElementById("s").innerText = s < 10 ? "0"+s : s;
-        }
-
-        if (distance < 0) {
-            clearInterval(timer);
-            document.getElementById("countdown").style.display = "none";
-            document.getElementById("title-text").innerText = "Chúc Mừng Sinh Nhật!";
-            document.getElementById("msg-text").innerHTML = "Thời gian trôi đi như những cánh hoa rơi...<br>Sinh nhật vui vẻ nhé!";
-            document.getElementById("btn-gift").style.display = "inline-block";
+        // --- 3. XỬ LÝ CẢM BIẾN (GYROSCOPE) ---
+        function handleOrientation(event) {
+            let x = event.beta;  // Nghiêng trước sau
+            let y = event.gamma; // Nghiêng trái phải
             
-            // Pháo hoa kết thúc
-            launchFireworks();
+            // Fix lỗi null
+            if (x === null || y === null) return;
+
+            // Giới hạn góc
+            if (x > 30) x = 30; if (x < -30) x = -30;
+            if (y > 30) y = 30; if (y < -30) y = -30;
+
+            // Xoay thẻ
+            card.style.transform = `rotateX(${-x}deg) rotateY(${y}deg)`;
+            
+            // Hiệu ứng bóng đổ nổi
+            let shadowX = -y * 0.5; let shadowY = x * 0.5;
+            card.style.boxShadow = `${shadowX}px ${shadowY + 15}px 35px rgba(255, 182, 193, 0.4)`;
+
+            // Di chuyển ánh sáng (Shine)
+            let moveShine = -150 + (y * 3); // Tính toán vị trí
+            shine.style.left = moveShine + '%';
         }
-    }, 1000);
 
-    // --- 6. CÁC HÀM PHỤ TRỢ ---
-    function launchFireworks() {
-        var duration = 15 * 1000;
-        var animationEnd = Date.now() + duration;
-        var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-        function randomInRange(min, max) { return Math.random() * (max - min) + min; }
-        var interval = setInterval(function() {
-            var timeLeft = animationEnd - Date.now();
-            if (timeLeft <= 0) { return clearInterval(interval); }
-            var particleCount = 50 * (timeLeft / duration);
-            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-        }, 250);
-    }
+        // --- 4. XỬ LÝ CẢM ỨNG (TOUCH FALLBACK) ---
+        document.addEventListener("touchmove", (e) => {
+            if (window.innerWidth > 800) return;
+            let touch = e.touches[0];
+            let xAxis = (window.innerWidth / 2 - touch.pageX) / 20;
+            let yAxis = (window.innerHeight / 2 - touch.pageY) / 20;
+            card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+        document.addEventListener("touchend", () => {
+            card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        });
 
-    function openMemory() {
-        var colors = ['#ff9a9e', '#a18cd1', '#fad0c4'];
-        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: colors });
-        document.getElementById("gift-area").style.display = "block";
-        var btn = document.getElementById("btn-gift");
-        btn.innerText = "Đã Lưu Ký Ức ❤️";
-        btn.style.pointerEvents = "none";
-        btn.style.background = "#b2bec3";
-        if(bgMusic) bgMusic.play();
-    }
+        // --- 5. XỬ LÝ CHUỘT (PC) ---
+        document.addEventListener("mousemove", (e) => {
+            if(window.innerWidth < 800) return;
+            let xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            let yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            shine.style.left = (150 - (xAxis * 5)) + '%'; // Di chuyển shine ngược chiều chuột
+        });
+        document.addEventListener("mouseleave", () => {
+            card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        });
 
-    // --- 7. HIỆU ỨNG MOUSE CHO PC ---
-    document.addEventListener("mousemove", (e) => {
-        if(window.innerWidth < 800) return;
-        let xAxis = (window.innerWidth / 2 - e.pageX) / 25;
-        let yAxis = (window.innerHeight / 2 - e.pageY) / 25;
-        card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-    });
-    
-    document.addEventListener("mouseleave", () => {
-        if(window.innerWidth > 800) card.style.transform = `rotateY(0deg) rotateX(0deg)`;
-    });
-</script>
+        // --- 6. ĐỒNG HỒ ĐẾM NGƯỢC ---
+        const birthdayTime = new Date("December 24, 2025 11:00:00").getTime();
+
+        const timer = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = birthdayTime - now;
+
+            const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((distance % (1000 * 60)) / 1000);
+
+            if(document.getElementById("d")) {
+                document.getElementById("d").innerText = d < 10 ? "0"+d : d;
+                document.getElementById("h").innerText = h < 10 ? "0"+h : h;
+                document.getElementById("m").innerText = m < 10 ? "0"+m : m;
+                document.getElementById("s").innerText = s < 10 ? "0"+s : s;
+            }
+
+            if (distance < 0) {
+                clearInterval(timer);
+                document.getElementById("countdown").style.display = "none";
+                
+                const title = document.getElementById("title-text");
+                title.innerText = "Chúc Mừng Sinh Nhật!";
+                title.style.fontSize = "3em";
+                
+                const msg = document.getElementById("msg-text");
+                msg.innerHTML = "Thời gian trôi đi như những cánh hoa rơi, nhưng những ký ức đẹp về chị thì sẽ luôn ngưng đọng mãi.<br>Sinh nhật vui vẻ nhé!";
+                
+                document.getElementById("btn-gift").style.display = "inline-block";
+                
+                // Bắn pháo hoa kết thúc
+                launchFireworks();
+            }
+        }, 1000);
+
+        // --- 7. CÁC HÀM HIỆU ỨNG ---
+        function launchFireworks() {
+            var duration = 15 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) { return clearInterval(interval); }
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+        function openMemory() {
+            // Bắn pháo giấy
+            var colors = ['#ff9a9e', '#a18cd1', '#fad0c4'];
+            (function frame() {
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: colors });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: colors });
+                if (Date.now() < (Date.now() + 2000)) { requestAnimationFrame(frame); }
+            }());
+
+            // Hiện quà
+            document.getElementById("gift-area").style.display = "block";
+            
+            // Đổi nút (nhưng vẫn cho bấm lại)
+            var btn = document.getElementById("btn-gift");
+            btn.innerText = "Đã Lưu! ❤️";
+
+            // Đảm bảo nhạc chạy
+            if(bgMusic.paused) bgMusic.play();
+        }
+    </script>
 </body>
-
 </html>
-
-
-
