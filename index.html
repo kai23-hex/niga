@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
-        /* --- 1. CĂN CHỈNH GIỮA MÀN HÌNH (FIX LỖI LỆCH) --- */
+        /* --- 1. CĂN CHỈNH GIỮA MÀN HÌNH --- */
         * { box-sizing: border-box; }
         body {
             margin: 0; padding: 0;
@@ -71,9 +71,9 @@
         }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* --- 4. THẺ BÀI (ĐÃ FIX MÀU SẮC) --- */
+        /* --- 4. THẺ BÀI (ĐÃ SỬA MÀU SÁNG, TRONG SUỐT) --- */
         .memory-card {
-            /* Tăng độ đậm nền trắng lên 0.7 để chữ dễ đọc hơn, không bị ám tím */
+            /* Sử dụng màu trắng trong suốt (rgba) để tạo hiệu ứng pha lê sáng */
             background: rgba(255, 255, 255, 0.7); 
             backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.9);
@@ -315,7 +315,7 @@
         });
 
         // --- 8. ĐỒNG HỒ ĐẾM NGƯỢC ---
-        const birthdayTime = new Date("December 12, 2025 16:43:00").getTime();
+        const birthdayTime = new Date("December 24, 2025 11:00:00").getTime();
 
         const timer = setInterval(function() {
             const now = new Date().getTime();
