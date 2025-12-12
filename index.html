@@ -16,12 +16,13 @@
             background: linear-gradient(135deg, #ffdee9 0%, #b5fffc 100%);
             font-family: 'Quicksand', sans-serif;
             display: flex; justify-content: center; align-items: center;
-            overflow: hidden;
+            overflow: hidden; /* Ẩn thanh cuộn */
             position: relative;
             perspective: 1200px; /* Chiều sâu 3D */
+            touch-action: none; /* QUAN TRỌNG: Chặn hành vi cuộn/zoom mặc định của trình duyệt */
         }
 
-        /* --- 2. HIỆU ỨNG SAO BĂNG NỀN --- */
+        /* --- 2. HIỆU ỨNG SAO BĂNG --- */
         .sky-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 0; pointer-events: none; transform: rotateZ(45deg);
@@ -56,6 +57,7 @@
             display: flex; justify-content: center; align-items: center; flex-direction: column;
             color: white; transition: opacity 0.5s;
             backdrop-filter: blur(5px);
+            pointer-events: auto; /* Đảm bảo nhận được click */
         }
         .start-btn {
             margin-top: 20px; padding: 15px 40px; border-radius: 50px;
@@ -84,7 +86,7 @@
             animation: cardGlow 4s infinite alternate;
         }
 
-        /* Độ dày thẻ (Màu hồng thạch anh) */
+        /* Độ dày thẻ */
         .memory-card::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             border-radius: 30px;
@@ -93,7 +95,7 @@
             box-shadow: 0 30px 40px rgba(0,0,0,0.2);
         }
 
-        /* Ánh sáng quét qua (Shine) */
+        /* Ánh sáng quét qua */
         .shine-layer {
             position: absolute; top: 0; left: -150%; width: 100%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
@@ -106,13 +108,13 @@
             100% { box-shadow: 0 20px 50px rgba(161, 140, 209, 0.6), 0 0 20px rgba(162, 155, 254, 0.4); border-color: #fff; }
         }
 
-        /* --- 5. NỘI DUNG BÊN TRONG (Parallax) --- */
+        /* --- 5. NỘI DUNG BÊN TRONG --- */
         .avatar-frame {
             width: 120px; height: 120px; margin: 0 auto 15px;
             padding: 5px; border-radius: 50%;
             background: linear-gradient(45deg, #ff9a9e, #a18cd1);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transform: translateZ(30px); /* Nổi lên */
+            transform: translateZ(30px);
         }
         .avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid white; }
 
@@ -159,6 +161,7 @@
             transform: translateZ(50px);
         }
         .btn-reveal:hover { transform: scale(1.05) translateZ(50px); }
+        .btn-reveal:active { transform: scale(0.95) translateZ(50px); }
         
         #gift-area { display: none; margin-top: 20px; animation: fadeIn 1s; transform: translateZ(30px); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -214,34 +217,40 @@
     </audio>
 
     <script>
-        // --- 1. RESET TRẠNG THÁI KHI TẢI LẠI TRANG ---
-        window.onload = function() {
-            var overlay = document.getElementById('start-overlay');
-            if (overlay) {
-                overlay.style.display = 'flex';
-                overlay.style.opacity = '1';
-            }
-        };
+        // --- 1. CHẶN CUỘN TRANG (Anti-Scroll) ---
+        // Dòng này giúp thẻ đứng yên, không bị trượt cả trang web khi vuốt
+        document.body.addEventListener('touchmove', function(e) { 
+            e.preventDefault(); 
+        }, { passive: false });
 
-        const card = document.getElementById("card3d");
-        const shine = document.getElementById("shine");
+        // --- 2. KHỞI TẠO BIẾN ---
+        const card = document.querySelector(".memory-card");
+        const shine = document.querySelector(".shine-layer");
         const bgMusic = document.getElementById("bgMusic");
 
-        // --- 2. HÀM KHỞI ĐỘNG (Nút Chạm để mở) ---
+        // --- 3. RESET TRẠNG THÁI KHI F5 ---
+        window.onload = function() {
+            var overlay = document.getElementById('start-overlay');
+            if (overlay) { overlay.style.display = 'flex'; overlay.style.opacity = '1'; }
+        };
+
+        // --- 4. HÀM KHỞI ĐỘNG (Nút Chạm để mở) ---
         function startExperience() {
             // Ẩn màn hình chờ
             document.getElementById('start-overlay').style.opacity = '0';
             setTimeout(() => { document.getElementById('start-overlay').style.display = 'none'; }, 500);
 
             // Phát nhạc & Giảm volume
-            if(bgMusic) { bgMusic.volume = 0.3; bgMusic.play().catch(e => console.log(e)); }
+            if(bgMusic) { bgMusic.volume = 0.4; bgMusic.play().catch(e => console.log(e)); }
 
-            // Xin quyền iOS
+            // Xin quyền iOS (Cảm biến)
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                 DeviceOrientationEvent.requestPermission()
                     .then(permissionState => {
                         if (permissionState === 'granted') {
                             window.addEventListener('deviceorientation', handleOrientation);
+                        } else {
+                            alert("Bạn đã từ chối quyền cảm biến. Hãy dùng ngón tay vuốt nhẹ lên thẻ nhé!");
                         }
                     })
                     .catch(console.error);
@@ -251,56 +260,66 @@
             }
         }
 
-        // --- 3. XỬ LÝ CẢM BIẾN (GYROSCOPE) ---
+        // --- 5. XỬ LÝ CẢM BIẾN (GYROSCOPE) ---
         function handleOrientation(event) {
             let x = event.beta;  // Nghiêng trước sau
             let y = event.gamma; // Nghiêng trái phải
             
-            // Fix lỗi null
             if (x === null || y === null) return;
 
-            // Giới hạn góc
-            if (x > 30) x = 30; if (x < -30) x = -30;
-            if (y > 30) y = 30; if (y < -30) y = -30;
+            // Giới hạn góc (Max 20 độ) để thẻ luôn trong khung
+            if (x > 20) x = 20; if (x < -20) x = -20;
+            if (y > 20) y = 20; if (y < -20) y = -20;
 
             // Xoay thẻ
             card.style.transform = `rotateX(${-x}deg) rotateY(${y}deg)`;
             
-            // Hiệu ứng bóng đổ nổi
+            // Hiệu ứng bóng đổ
             let shadowX = -y * 0.5; let shadowY = x * 0.5;
             card.style.boxShadow = `${shadowX}px ${shadowY + 15}px 35px rgba(255, 182, 193, 0.4)`;
 
             // Di chuyển ánh sáng (Shine)
-            let moveShine = -150 + (y * 3); // Tính toán vị trí
-            shine.style.left = moveShine + '%';
+            let moveShine = -150 + (y * 3); 
+            if(shine) shine.style.left = moveShine + '%';
         }
 
-        // --- 4. XỬ LÝ CẢM ỨNG (TOUCH FALLBACK) ---
+        // --- 6. XỬ LÝ VUỐT TAY (TOUCH SWIPE) ---
         document.addEventListener("touchmove", (e) => {
-            if (window.innerWidth > 800) return;
+            if (window.innerWidth > 800) return; // Chỉ chạy trên mobile
+            
             let touch = e.touches[0];
-            let xAxis = (window.innerWidth / 2 - touch.pageX) / 20;
-            let yAxis = (window.innerHeight / 2 - touch.pageY) / 20;
+            // Tính toán khoảng cách
+            let xRaw = (window.innerWidth / 2 - touch.pageX) / 20;
+            let yRaw = (window.innerHeight / 2 - touch.pageY) / 20;
+
+            // CLAMP (Kẹp góc quay max 25 độ) - Chống trượt mất thẻ
+            let xAxis = Math.max(-25, Math.min(25, xRaw)); 
+            let yAxis = Math.max(-25, Math.min(25, yRaw));
+
             card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-        });
+        }, { passive: false });
+
         document.addEventListener("touchend", () => {
+            // Thả tay ra -> Trôi về giữa
+            card.style.transition = "transform 0.5s ease";
             card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+            setTimeout(() => { card.style.transition = "transform 0.1s ease-out"; }, 500);
         });
 
-        // --- 5. XỬ LÝ CHUỘT (PC) ---
+        // --- 7. XỬ LÝ CHUỘT (PC) ---
         document.addEventListener("mousemove", (e) => {
             if(window.innerWidth < 800) return;
             let xAxis = (window.innerWidth / 2 - e.pageX) / 25;
             let yAxis = (window.innerHeight / 2 - e.pageY) / 25;
             card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-            shine.style.left = (150 - (xAxis * 5)) + '%'; // Di chuyển shine ngược chiều chuột
+            if(shine) shine.style.left = (150 - (xAxis * 5)) + '%';
         });
         document.addEventListener("mouseleave", () => {
             card.style.transform = `rotateY(0deg) rotateX(0deg)`;
         });
 
-        // --- 6. ĐỒNG HỒ ĐẾM NGƯỢC ---
-        const birthdayTime = new Date("December 24, 2025 11:00:00").getTime();
+        // --- 8. ĐỒNG HỒ ĐẾM NGƯỢC ---
+        const birthdayTime = new Date("December 12, 2025 16:20:00").getTime();
 
         const timer = setInterval(function() {
             const now = new Date().getTime();
@@ -331,12 +350,11 @@
                 
                 document.getElementById("btn-gift").style.display = "inline-block";
                 
-                // Bắn pháo hoa kết thúc
                 launchFireworks();
             }
         }, 1000);
 
-        // --- 7. CÁC HÀM HIỆU ỨNG ---
+        // --- 9. CÁC HÀM HIỆU ỨNG ---
         function launchFireworks() {
             var duration = 15 * 1000;
             var animationEnd = Date.now() + duration;
@@ -363,7 +381,7 @@
             // Hiện quà
             document.getElementById("gift-area").style.display = "block";
             
-            // Đổi nút (nhưng vẫn cho bấm lại)
+            // Đổi nút (Vẫn cho bấm tiếp)
             var btn = document.getElementById("btn-gift");
             btn.innerText = "Đã Lưu! ❤️";
 
