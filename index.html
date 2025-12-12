@@ -5,13 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Lời Chúc Từ Cyrene</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600;700&subset=vietnamese&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600;700;900&subset=vietnamese&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
         /* --- KHAI BÁO BIẾN MÀU NỀN CHÍNH --- */
         :root {
-            /* Định nghĩa dải màu nền chính để dùng lại cho chữ */
             --main-bg-gradient: linear-gradient(135deg, #ffdee9 0%, #b5fffc 100%);
             --gold-border: #d4af37;
         }
@@ -21,7 +20,6 @@
         body {
             margin: 0; padding: 0;
             width: 100vw; height: 100vh;
-            /* Sử dụng biến màu nền đã định nghĩa */
             background: var(--main-bg-gradient);
             font-family: 'Quicksand', sans-serif;
             display: flex; justify-content: center; align-items: center;
@@ -47,37 +45,29 @@
         .start-btn { margin-top: 20px; padding: 15px 40px; border-radius: 50px; background: var(--main-bg-gradient); color: #57606f; border: none; font-size: 1.2em; font-weight: bold; animation: pulse 2s infinite; cursor: pointer; box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* --- 4. THẺ BÀI (NỀN TỐI HƠN) --- */
+        /* --- 4. THẺ BÀI --- */
         .memory-card {
-            /* THAY ĐỔI QUAN TRỌNG: Dùng màu ĐEN trong suốt (0.25) để làm nền tối đi */
             background: rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(15px); /* Làm mờ nền mạnh hơn */
+            backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
-            
             border: 6px double var(--gold-border); 
             border-radius: 35px;
-            
             padding: 30px 20px;
             text-align: center;
             width: 85vw; max-width: 400px;
             z-index: 10; 
-            
             position: relative;
             top: -40px;
-            
             transform-style: preserve-3d; 
             transition: transform 0.1s ease-out;
-            
-            /* Bóng đổ tối màu */
             box-shadow: 0 25px 50px rgba(0,0,0,0.3);
             animation: cardGlow 4s infinite alternate;
         }
 
-        /* Độ dày thẻ phía sau */
         .memory-card::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             border-radius: 30px;
-            background: rgba(0, 0, 0, 0.3); /* Cạnh thẻ cũng tối màu */
+            background: rgba(0, 0, 0, 0.3);
             transform: translateZ(-10px);
             box-shadow: 0 30px 40px rgba(0,0,0,0.4);
         }
@@ -94,7 +84,7 @@
             100% { border-color: #f1c40f; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4); }
         }
 
-        /* --- 5. NỘI DUNG (CHỮ GIỐNG NỀN) --- */
+        /* --- 5. NỘI DUNG --- */
         .avatar-frame {
             width: 120px; height: 120px; margin: 0 auto 15px;
             padding: 5px; border-radius: 50%;
@@ -106,21 +96,17 @@
 
         h1 {
             font-family: 'Dancing Script', cursive;
-            /* THAY ĐỔI QUAN TRỌNG: Áp dụng dải màu nền chính cho tiêu đề */
             background: var(--main-bg-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             color: transparent;
-
             font-size: 2.5em; margin: 10px 0;
             transform: translateZ(40px);
-            /* Thêm bóng nhẹ để tách chữ khỏi nền tối */
             filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
         }
 
         p { 
-            /* Chữ đoạn văn chuyển sang màu trắng sáng để dễ đọc trên nền thẻ tối */
             color: #ffffff; 
             font-size: 1.1em; line-height: 1.6; 
             transform: translateZ(25px); 
@@ -128,31 +114,33 @@
             text-shadow: 0 1px 3px rgba(0,0,0,0.5);
         }
 
+        /* ĐỒNG HỒ ĐẾM NGƯỢC (ĐÃ CHỈNH SỬA) */
         .countdown-container { display: flex; justify-content: center; gap: 10px; margin: 20px 0; transform: translateZ(35px); }
         .time-bubble {
-            /* Nền bong bóng sáng để làm nổi bật số bên trong */
             background: rgba(255, 255, 255, 0.9);
             width: 55px; height: 65px; border-radius: 15px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2); border: 2px solid var(--gold-border);
             animation: floatBubble 3s ease-in-out infinite;
         }
+        /* Số đếm ngược: Đậm hơn (font-weight: 900) và to hơn một chút */
         .time-bubble span { 
-            font-weight: bold; font-size: 1.4em; 
-            /* Số đếm ngược cũng dùng dải màu của nền */
+            font-weight: 900; /* Đậm nhất có thể */
+            font-size: 1.5em; /* To hơn chút */
             background: var(--main-bg-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .time-bubble small { font-size: 0.7em; color: #7f8c8d; margin-top: 3px; font-weight: bold; }
+        /* Chữ chú thích: Nhạt hơn số */
+        .time-bubble small { font-size: 0.7em; color: #7f8c8d; margin-top: 3px; font-weight: 600; }
+        
         .time-bubble:nth-child(1) { animation-delay: 0s; } .time-bubble:nth-child(2) { animation-delay: 0.5s; }
         .time-bubble:nth-child(3) { animation-delay: 1s; } .time-bubble:nth-child(4) { animation-delay: 1.5s; }
         @keyframes floatBubble { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 
         .btn-reveal {
-            /* Nút bấm dùng dải màu nền */
             background: var(--main-bg-gradient);
-            color: #4a5568; /* Màu chữ tối trên nút sáng */
+            color: #4a5568; 
             border: none;
             padding: 12px 35px; border-radius: 50px;
             font-size: 1.1em; font-weight: bold; cursor: pointer;
@@ -163,7 +151,6 @@
         .btn-reveal:active { transform: scale(0.95) translateZ(50px); }
         
         #gift-area { display: none; margin-top: 20px; animation: fadeIn 1s; transform: translateZ(30px); }
-        /* Chữ trong khu vực quà tặng cũng dùng màu nền */
         #gift-area p:first-child {
             background: var(--main-bg-gradient);
             -webkit-background-clip: text;
@@ -223,7 +210,6 @@
     </audio>
 
     <script>
-        // --- JS LOGIC GIỮ NGUYÊN ---
         document.body.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
         const card = document.querySelector(".memory-card");
         const shine = document.querySelector(".shine-layer");
@@ -289,7 +275,6 @@
                 clearInterval(timer); document.getElementById("countdown").style.display = "none";
                 const title = document.getElementById("title-text"); 
                 title.innerText = "Chúc Mừng Sinh Nhật!"; title.style.fontSize = "3em";
-                // Áp dụng màu nền cho chữ tiêu đề mới
                 title.style.background = "var(--main-bg-gradient)";
                 title.style.webkitBackgroundClip = "text";
                 title.style.webkitTextFillColor = "transparent";
@@ -307,7 +292,6 @@
             var interval = setInterval(function() {
                 var timeLeft = end - Date.now(); if (timeLeft <= 0) return clearInterval(interval);
                 var particleCount = 50 * (timeLeft / duration);
-                // Pháo hoa dùng màu của nền
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: ['#ffdee9', '#b5fffc', '#ffffff'] }));
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: ['#ffdee9', '#b5fffc', '#ffffff'] }));
             }, 250);
