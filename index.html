@@ -9,12 +9,12 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
-        /* --- 1. CẤU HÌNH CHUNG --- */
+        /* --- 1. CẤU HÌNH CƠ BẢN --- */
         * { box-sizing: border-box; }
         body {
             margin: 0; padding: 0;
             width: 100vw; height: 100vh;
-            /* Nền gradient Pastel (Hồng - Xanh) chuẩn đẹp */
+            /* Nền gradient pastel nhẹ nhàng */
             background: linear-gradient(135deg, #ffdee9 0%, #b5fffc 100%);
             font-family: 'Quicksand', sans-serif;
             display: flex; justify-content: center; align-items: center;
@@ -24,7 +24,7 @@
             -webkit-user-select: none; user-select: none;
         }
 
-        /* --- 2. HIỆU ỨNG SAO BĂNG --- */
+        /* --- 2. SAO BĂNG --- */
         .sky-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; transform: rotateZ(45deg); }
         .shooting_star { position: absolute; left: 50%; top: 50%; height: 2px; background: linear-gradient(-45deg, #5f91ff, rgba(0, 0, 255, 0)); border-radius: 999px; filter: drop-shadow(0 0 6px #699bff); animation: tail 3000ms ease-in-out infinite, shooting 3000ms ease-in-out infinite; }
         .shooting_star::before, .shooting_star::after { content: ''; position: absolute; top: calc(50% - 1px); right: 0; height: 2px; background: linear-gradient(-45deg, rgba(0, 0, 255, 0), #5f91ff, rgba(0, 0, 255, 0)); transform: translateX(50%) rotateZ(45deg); border-radius: 100%; animation: shining 3000ms ease-in-out infinite; }
@@ -39,36 +39,39 @@
         .start-btn { margin-top: 20px; padding: 15px 40px; border-radius: 50px; background: #ff9a9e; color: white; border: none; font-size: 1.2em; font-weight: bold; animation: pulse 2s infinite; cursor: pointer; box-shadow: 0 0 20px rgba(255, 154, 158, 0.6); }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* --- 4. THẺ BÀI (ĐÃ SỬA LỖI MÀU ĐẬM - TRỞ VỀ PHA LÊ TRONG SUỐT) --- */
+        /* --- 4. THẺ BÀI (NỀN TRONG SUỐT) --- */
         .memory-card {
-            /* Dùng màu trắng trong suốt (0.25) -> Để nền ngoài xuyên qua được */
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(15px); /* Làm mờ nhẹ nền sau thẻ */
-            -webkit-backdrop-filter: blur(15px); /* Hỗ trợ iPhone */
+            /* Đặt nền là trong suốt để giống hệt nền ngoài */
+            background: transparent;
             
-            /* Viền vàng kép sang trọng */
+            /* Giữ lại hiệu ứng làm mờ để tạo cảm giác kính */
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            
+            /* Viền vàng kép */
             border: 6px double #d4af37; 
             border-radius: 35px;
             
             padding: 30px 20px;
             text-align: center;
             
-            /* Kích thước và căn giữa */
+            /* Căn chỉnh kích thước chuẩn */
             width: 85vw; max-width: 400px;
-            margin: 0 auto;
+            
+            /* Căn giữa tuyệt đối */
+            margin: 0 auto; 
+            left: 0; right: 0;
             
             z-index: 10; position: relative;
             transform-style: preserve-3d; transition: transform 0.1s ease-out;
             
-            /* Hiệu ứng Hào Quang Vàng */
+            /* Hiệu ứng Hào Quang */
             animation: cardGlow 4s infinite alternate;
         }
 
-        /* Độ dày thẻ (Màu vàng đồng) */
         .memory-card::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             border-radius: 30px;
-            background: #c49a6c;
+            background: #e056fd; /* Cạnh thẻ tím hồng */
             transform: translateZ(-10px);
             box-shadow: 0 30px 40px rgba(0,0,0,0.2);
         }
@@ -81,8 +84,8 @@
         }
 
         @keyframes cardGlow {
-            0% { box-shadow: 0 15px 35px rgba(212, 175, 55, 0.2), 0 0 15px rgba(255, 223, 0, 0.1); border-color: #d4af37; }
-            100% { box-shadow: 0 20px 50px rgba(196, 154, 108, 0.4), 0 0 30px rgba(255, 215, 0, 0.3); border-color: #f1c40f; }
+            0% { box-shadow: 0 15px 35px rgba(255, 182, 193, 0.3), 0 0 10px rgba(255, 154, 158, 0.1); border-color: #d4af37; }
+            100% { box-shadow: 0 20px 50px rgba(161, 140, 209, 0.6), 0 0 20px rgba(162, 155, 254, 0.4); border-color: #f1c40f; }
         }
 
         /* --- 5. NỘI DUNG --- */
@@ -105,7 +108,6 @@
             filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
         }
 
-        /* Chữ đoạn văn màu xám đậm dễ đọc */
         p { 
             color: #4a5568; font-size: 1.1em; line-height: 1.6; 
             transform: translateZ(25px); font-weight: 700;
@@ -122,7 +124,7 @@
             animation: floatBubble 3s ease-in-out infinite;
         }
         
-        /* SỐ ĐẾM NGƯỢC: MÀU HỒNG ĐẬM (Không dùng gradient để tránh bị nhạt) */
+        /* SỐ ĐẾM NGƯỢC: MÀU HỒNG ĐẬM SOLID */
         .time-bubble span { 
             font-weight: 900; /* Siêu đậm */
             font-size: 1.6em; 
