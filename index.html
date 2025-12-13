@@ -9,27 +9,22 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
-        /* --- KHAI BÁO BIẾN MÀU --- */
-        :root {
-            --main-bg-gradient: linear-gradient(135deg, #ffdee9 0%, #b5fffc 100%);
-            --gold-border: #d4af37;
-        }
-
-        /* --- 1. CẤU HÌNH CHUNG --- */
+        /* --- 1. CẤU HÌNH CƠ BẢN --- */
         * { box-sizing: border-box; }
         body {
             margin: 0; padding: 0;
             width: 100vw; height: 100vh;
-            background: var(--main-bg-gradient);
+            /* Nền gradient pastel nhẹ nhàng */
+            background: linear-gradient(135deg, #ffdee9 0%, #b5fffc 100%);
             font-family: 'Quicksand', sans-serif;
             display: flex; justify-content: center; align-items: center;
             overflow: hidden; position: relative;
             perspective: 1000px;
-            touch-action: none;
+            touch-action: none; /* Chặn kéo trang */
             -webkit-user-select: none; user-select: none;
         }
 
-        /* --- 2. HIỆU ỨNG SAO BĂNG --- */
+        /* --- 2. SAO BĂNG --- */
         .sky-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; transform: rotateZ(45deg); }
         .shooting_star { position: absolute; left: 50%; top: 50%; height: 2px; background: linear-gradient(-45deg, #5f91ff, rgba(0, 0, 255, 0)); border-radius: 999px; filter: drop-shadow(0 0 6px #699bff); animation: tail 3000ms ease-in-out infinite, shooting 3000ms ease-in-out infinite; }
         .shooting_star::before, .shooting_star::after { content: ''; position: absolute; top: calc(50% - 1px); right: 0; height: 2px; background: linear-gradient(-45deg, rgba(0, 0, 255, 0), #5f91ff, rgba(0, 0, 255, 0)); transform: translateX(50%) rotateZ(45deg); border-radius: 100%; animation: shining 3000ms ease-in-out infinite; }
@@ -37,123 +32,122 @@
         @keyframes tail { 0% { width: 0; } 30% { width: 100px; } 100% { width: 0; } }
         @keyframes shooting { 0% { transform: translateX(0); } 100% { transform: translateX(300px); } }
         @keyframes shining { 0% { width: 0; } 50% { width: 30px; } 100% { width: 0; } }
-        .shooting_star:nth-child(1) { top: 0; left: 0; animation-delay: 0ms; } .shooting_star:nth-child(2) { top: 0; left: 50%; animation-delay: 2000ms; }
-        .shooting_star:nth-child(3) { top: 50%; left: 0; animation-delay: 4000ms; } .shooting_star:nth-child(4) { top: 50%; left: 50%; animation-delay: 6000ms; }
+        .shooting_star:nth-child(1) { top: 0; left: 0; animation-delay: 0ms; } .shooting_star:nth-child(2) { top: 0; left: 50%; animation-delay: 2000ms; } .shooting_star:nth-child(3) { top: 50%; left: 0; animation-delay: 4000ms; } .shooting_star:nth-child(4) { top: 50%; left: 50%; animation-delay: 6000ms; }
 
         /* --- 3. MÀN HÌNH CHỜ --- */
         #start-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 99999 !important; display: flex; justify-content: center; align-items: center; flex-direction: column; color: white; transition: opacity 0.5s; backdrop-filter: blur(5px); pointer-events: auto; }
-        .start-btn { margin-top: 20px; padding: 15px 40px; border-radius: 50px; background: var(--main-bg-gradient); color: #57606f; border: none; font-size: 1.2em; font-weight: bold; animation: pulse 2s infinite; cursor: pointer; box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); }
+        .start-btn { margin-top: 20px; padding: 15px 40px; border-radius: 50px; background: #ff9a9e; color: white; border: none; font-size: 1.2em; font-weight: bold; animation: pulse 2s infinite; cursor: pointer; box-shadow: 0 0 20px rgba(255, 154, 158, 0.6); }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* --- 4. THẺ BÀI --- */
+        /* --- 4. THẺ BÀI (PHIÊN BẢN PHA LÊ CHUẨN) --- */
         .memory-card {
-            background: rgba(0, 0, 0, 0.25); /* Nền tối nhẹ như yêu cầu trước */
+            /* Nền trắng trong suốt (Pha lê) - Sửa lại màu này cho đẹp nhất */
+            background: rgba(255, 255, 255, 0.35);
             backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 6px double var(--gold-border); 
+            
+            /* Viền vàng kép */
+            border: 6px double #d4af37; 
             border-radius: 35px;
+            
             padding: 30px 20px;
             text-align: center;
+            
+            /* Căn chỉnh kích thước chuẩn */
             width: 85vw; max-width: 400px;
-            z-index: 10; 
-            position: relative;
-            top: -40px;
+            
+            /* Căn giữa tuyệt đối */
+            margin: 0 auto; 
+            left: 0; right: 0;
+            
+            z-index: 10; position: relative;
             transform-style: preserve-3d; transition: transform 0.1s ease-out;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            
+            /* Hiệu ứng Hào Quang */
             animation: cardGlow 4s infinite alternate;
         }
 
         .memory-card::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             border-radius: 30px;
-            background: rgba(0, 0, 0, 0.3);
+            background: #e056fd; /* Cạnh thẻ tím hồng */
             transform: translateZ(-10px);
-            box-shadow: 0 30px 40px rgba(0,0,0,0.4);
+            box-shadow: 0 30px 40px rgba(0,0,0,0.2);
         }
 
         .shine-layer {
             position: absolute; top: 0; left: -150%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
             transform: skewX(-25deg); pointer-events: none; transition: 0s;
             mix-blend-mode: overlay;
         }
 
         @keyframes cardGlow {
-            0% { border-color: var(--gold-border); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2); }
-            100% { border-color: #f1c40f; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4); }
+            0% { box-shadow: 0 15px 35px rgba(255, 182, 193, 0.3), 0 0 10px rgba(255, 154, 158, 0.1); border-color: #d4af37; }
+            100% { box-shadow: 0 20px 50px rgba(161, 140, 209, 0.6), 0 0 20px rgba(162, 155, 254, 0.4); border-color: #f1c40f; }
         }
 
         /* --- 5. NỘI DUNG --- */
         .avatar-frame {
             width: 120px; height: 120px; margin: 0 auto 15px;
             padding: 5px; border-radius: 50%;
-            background: linear-gradient(45deg, var(--gold-border), #f1c40f);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background: linear-gradient(45deg, #d4af37, #f1c40f);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             transform: translateZ(30px);
         }
         .avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #fff; }
 
         h1 {
             font-family: 'Dancing Script', cursive;
-            background: var(--main-bg-gradient);
+            background: linear-gradient(to right, #d4af37, #e84393); /* Chữ tiêu đề Vàng - Hồng */
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text; color: transparent;
-            font-size: 2.5em; margin: 10px 0;
+            font-size: 2.2em; margin: 10px 0;
             transform: translateZ(40px);
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
         }
 
         p { 
-            color: #ffffff; font-size: 1.1em; line-height: 1.6; 
+            color: #4a5568; font-size: 1.1em; line-height: 1.6; 
             transform: translateZ(25px); font-weight: 700;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            text-shadow: 0 1px 1px rgba(255,255,255,0.8);
         }
 
-        /* --- ĐỒNG HỒ ĐẾM NGƯỢC --- */
+        /* --- ĐỒNG HỒ (SỐ ĐẬM RÕ NÉT) --- */
         .countdown-container { display: flex; justify-content: center; gap: 10px; margin: 20px 0; transform: translateZ(35px); }
         .time-bubble {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.95); /* Nền bong bóng trắng rõ */
             width: 55px; height: 65px; border-radius: 15px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2); border: 2px solid var(--gold-border);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2); border: 2px solid #d4af37;
             animation: floatBubble 3s ease-in-out infinite;
         }
         
-        /* SỐ: QUAY LẠI MÀU TRONG SUỐT (GRADIENT) NHƯNG VẪN ĐẬM */
+        /* SỐ ĐẾM NGƯỢC: MÀU HỒNG ĐẬM SOLID (KHÔNG GRADIENT ĐỂ DỄ ĐỌC) */
         .time-bubble span { 
-            font-weight: 900; /* Vẫn giữ độ đậm Max */
+            font-weight: 900; /* Siêu đậm */
             font-size: 1.6em; 
-            /* Hiệu ứng trong suốt màu nền */
-            background: var(--main-bg-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            color: transparent;
-            /* Thêm bóng nhẹ để tách khỏi nền trắng */
-            filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
+            color: #e84393; /* Màu hồng đậm rõ nét */
+            text-shadow: none;
         }
         
-        .time-bubble small { font-size: 0.7em; color: #7f8c8d; margin-top: 3px; font-weight: 600; }
+        .time-bubble small { font-size: 0.7em; color: #7f8c8d; margin-top: 3px; font-weight: 700; }
         
         .time-bubble:nth-child(1) { animation-delay: 0s; } .time-bubble:nth-child(2) { animation-delay: 0.5s; }
         .time-bubble:nth-child(3) { animation-delay: 1s; } .time-bubble:nth-child(4) { animation-delay: 1.5s; }
         @keyframes floatBubble { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 
         .btn-reveal {
-            background: var(--main-bg-gradient);
-            color: #4a5568; border: none;
+            background: linear-gradient(90deg, #d4af37, #f1c40f);
+            color: white; border: none;
             padding: 12px 35px; border-radius: 50px;
             font-size: 1.1em; font-weight: bold; cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
             transition: transform 0.3s; display: none; font-family: 'Quicksand', sans-serif;
             transform: translateZ(50px);
         }
         .btn-reveal:active { transform: scale(0.95) translateZ(50px); }
         
         #gift-area { display: none; margin-top: 20px; animation: fadeIn 1s; transform: translateZ(30px); }
-        #gift-area p:first-child {
-            background: var(--main-bg-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            font-weight: bold; font-size: 1.2em;
-        }
+        #gift-area p:first-child { color: #d4af37; font-weight: bold; font-size: 1.2em; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     </style>
@@ -198,7 +192,7 @@
             <p>Đã lưu vào Vùng Đất Ký Ức:</p>
             🌸 1x Lời Chúc Vĩnh Cửu<br>
             💎 1x Pha Lê Hạnh Phúc<br>
-            <small style="color: white;">(Luôn mỉm cười nhé! ♪)</small>
+            <small style="color: #7f8c8d;">(Luôn mỉm cười nhé! ♪)</small>
         </div>
     </div>
 
@@ -221,22 +215,22 @@
             document.getElementById('start-overlay').style.opacity = '0';
             setTimeout(() => { document.getElementById('start-overlay').style.display = 'none'; }, 500);
             if(bgMusic) { bgMusic.volume = 0.4; bgMusic.play().catch(e => console.log(e)); }
+            
+            // Xử lý quyền iOS và Android
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                 DeviceOrientationEvent.requestPermission().then(p => { if (p === 'granted') window.addEventListener('deviceorientation', handleOrientation); }).catch(console.error);
-            } else { window.addEventListener('deviceorientation', handleOrientation); }
+            } else { 
+                window.addEventListener('deviceorientation', handleOrientation); 
+            }
         }
 
-        // --- TĂNG GÓC NGHIÊNG (TILT) LÊN 35 ĐỘ ---
+        // Tăng góc nghiêng lên 25 độ
         function handleOrientation(event) {
             let x = event.beta; let y = event.gamma; if (x === null || y === null) return;
-
-            // Kẹp góc quay Max 35 độ (Tăng độ nghiêng)
-            if (x > 35) x = 35; if (x < -35) x = -35;
-            if (y > 35) y = 35; if (y < -35) y = -35;
-
+            if (x > 25) x = 25; if (x < -25) x = -25; if (y > 25) y = 25; if (y < -25) y = -25;
             card.style.transform = `rotateX(${-x}deg) rotateY(${y}deg)`;
             let shadowX = -y * 0.5; let shadowY = x * 0.5;
-            card.style.boxShadow = `${shadowX}px ${shadowY + 15}px 35px rgba(0,0,0,0.3)`;
+            card.style.boxShadow = `${shadowX}px ${shadowY + 15}px 35px rgba(212, 175, 55, 0.3)`;
             if(shine) shine.style.left = (-150 + (y * 3)) + '%';
         }
 
@@ -245,11 +239,8 @@
             let touch = e.touches[0];
             let xRaw = (window.innerWidth / 2 - touch.pageX) / 20; 
             let yRaw = (window.innerHeight / 2 - touch.pageY) / 20;
-
-            // Tăng góc nghiêng khi vuốt tay lên 35 độ
-            let xAxis = Math.max(-35, Math.min(35, xRaw)); 
-            let yAxis = Math.max(-35, Math.min(35, yRaw));
-
+            let xAxis = Math.max(-25, Math.min(25, xRaw)); 
+            let yAxis = Math.max(-25, Math.min(25, yRaw));
             card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
         }, { passive: false });
 
@@ -282,7 +273,8 @@
                 clearInterval(timer); document.getElementById("countdown").style.display = "none";
                 const title = document.getElementById("title-text"); 
                 title.innerText = "Chúc Mừng Sinh Nhật!"; title.style.fontSize = "3em";
-                title.style.background = "var(--main-bg-gradient)";
+                // Chữ Chúc Mừng Sinh Nhật màu hồng tím đậm
+                title.style.background = "linear-gradient(to right, #e84393, #6c5ce7)";
                 title.style.webkitBackgroundClip = "text";
                 title.style.webkitTextFillColor = "transparent";
 
@@ -299,13 +291,13 @@
             var interval = setInterval(function() {
                 var timeLeft = end - Date.now(); if (timeLeft <= 0) return clearInterval(interval);
                 var particleCount = 50 * (timeLeft / duration);
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: ['#ffdee9', '#b5fffc', '#ffffff'] }));
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: ['#ffdee9', '#b5fffc', '#ffffff'] }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: ['#e84393', '#fd79a8', '#ffffff'] }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: ['#e84393', '#fd79a8', '#ffffff'] }));
             }, 250);
         }
 
         function openMemory() {
-            var colors = ['#ffdee9', '#b5fffc', '#ffffff'];
+            var colors = ['#e84393', '#fd79a8', '#ffffff'];
             (function frame() {
                 confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: colors });
                 confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: colors });
